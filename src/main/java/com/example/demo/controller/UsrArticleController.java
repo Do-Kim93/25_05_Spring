@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import com.example.demo.DemoApplication;
 import com.example.demo.service.ArticleService;
 import com.example.demo.vo.Article;
 
@@ -16,11 +16,19 @@ public class UsrArticleController {
 	@Autowired
 	private ArticleService articleService;
 
+	UsrArticleController() {
+
+	}
+
 	// 액션메서드
 
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
 	public Object doModify(int id, String title, String body) {
+
+		System.out.println("id: " + id);
+		System.out.println("title : " + title);
+		System.out.println("body : " + body);
 
 		Article article = articleService.getArticleById(id);
 
