@@ -34,6 +34,14 @@
 		SELECT * FROM article
 		WHERE id = #{id}
 	</select>
+	<select id="getArticlenum" parameterType="int"
+		>
+		SELECT count(*) FROM article;
+	</select>
+	<select id="getLastInsertId" parameterType="int">
+		SELECT
+		LAST_INSERT_ID()
+	</select>
 
 	<select id="getArticles"
 		resultType="com.example.demo.vo.Article">
