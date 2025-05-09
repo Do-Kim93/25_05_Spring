@@ -24,11 +24,11 @@ public class ResultData {
 		return rd;
 	}
 
-	public boolean isSuccess() {
-		return ResultCode.startsWith("S-");
-	}
-
-	public boolean isFail() {
-		return isSuccess() == false;
-	}
+//	public boolean isSuccess() {
+//		return ResultCode.startsWith("S-");
+//	}
+//
+//	public boolean isFail() {
+//		return isSuccess() == false;
+//	}
 }

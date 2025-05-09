@@ -33,7 +33,7 @@
 		resultType="com.example.demo.vo.Article">
 		SELECT * FROM article
 		WHERE id = #{id}
-	</select>
+	</select> 
 	<select id="getArticlenum" parameterType="int"
 		>
 		SELECT count(*) FROM article;

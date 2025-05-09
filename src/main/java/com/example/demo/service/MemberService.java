@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.repository.MemberRepository;
+import com.example.demo.util.Ut;
 import com.example.demo.vo.Member;
+import com.example.demo.vo.ResultData;
 
 @Service
 public class MemberService {
@@ -45,6 +47,17 @@ public class MemberService {
 
 	public Member getMemberById(int id) {
 		return memberRepository.getMemberById(id);
+	}
+
+	public ResultData login(String loginId, String loginPw) {
+		Member loginMember = memberRepository.getMemberByLoginId(loginId);
+		if (loginMember == null) {
+			return ResultData.from("F-1", Ut.f("잘못된 아이디 입니다."), loginId);
+		}
+		if (!loginMember.getLoginPw().equals(loginPw)) {
+			return ResultData.from("F-2", Ut.f("잘못된 비밀번호 입니다."));
+		}
+		return ResultData.from("S-1", Ut.f("%s회원님 반갑습니다", loginId), loginId);
 	}
 
 }
