@@ -18,46 +18,39 @@ public class MemberService {
 		this.memberRepository = memberRepository;
 	}
 
-	public int doJoin(String loginId, String loginPw, String name, String nickname, String cellphoneNum, String email) {
+	public ResultData<Integer> doJoin(String loginId, String loginPw, String name, String nickname, String cellphoneNum,
+			String email) {
 
 		Member existsMember = getMemberByLoginId(loginId);
-		System.out.println("existsMember : " + existsMember);
 
 		if (existsMember != null) {
-			return -1;
+			return ResultData.from("F-7", Ut.f("이미 사용중인 아이디(%s)입니다", loginId));
 		}
+
 		existsMember = getMemberByNameAndEmail(name, email);
 
 		if (existsMember != null) {
-			return -2;
+			return ResultData.from("F-8", Ut.f("이미 사용중인 이름(%s)과 이메일(%s)입니다", name, email));
 		}
 
-
 		memberRepository.doJoin(loginId, loginPw, name, nickname, cellphoneNum, email);
-		return memberRepository.getLastInsertId();
+
+		int id = memberRepository.getLastInsertId();
+
+		return ResultData.from("S-1", "회원가입 성공", id);
 	}
 
 	private Member getMemberByNameAndEmail(String name, String email) {
-		return memberRepository.getMemberByNameAndEmail(name,email);
+		return memberRepository.getMemberByNameAndEmail(name, email);
+
 	}
 
-	private Member getMemberByLoginId(String loginId) {
+	public Member getMemberByLoginId(String loginId) {
 		return memberRepository.getMemberByLoginId(loginId);
 	}
 
 	public Member getMemberById(int id) {
 		return memberRepository.getMemberById(id);
-	}
-
-	public ResultData login(String loginId, String loginPw) {
-		Member loginMember = memberRepository.getMemberByLoginId(loginId);
-		if (loginMember == null) {
-			return ResultData.from("F-1", Ut.f("잘못된 아이디 입니다."), loginId);
-		}
-		if (!loginMember.getLoginPw().equals(loginPw)) {
-			return ResultData.from("F-2", Ut.f("잘못된 비밀번호 입니다."));
-		}
-		return ResultData.from("S-1", Ut.f("%s회원님 반갑습니다", loginId), loginId);
 	}
 
 }
