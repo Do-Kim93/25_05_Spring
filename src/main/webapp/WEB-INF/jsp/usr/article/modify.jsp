@@ -5,21 +5,20 @@
 <%@ include file="../common/head.jspf"%>
 
 
-<form action="doModify">
-	<input type="hidden" value="${article.id}" name="id" />
-	<div>번호 : ${article.id}</div>
-	<div>날짜 : ${article.regDate}</div>
-	<div>
-		새 제목 :
-		<input type="text" placeholder="제목 입력" name="title" />
-	</div>
-	<div>
-		새 내용 :
-		<textarea type="text" placeholder="내용 입력" name="body"></textarea>
-	</div>
-	<button onclick=" alert('수정되었습니다.'); location.replace('../article/list')" type="submit">수정</button>
+<form action="/usr/article/doModify" method="post">
+    <input type="hidden" name="id" value="${article.id}" />
+    <div>번호 : ${article.id}</div>
+    <div>날짜 : ${article.regDate}</div>
+    <div>
+        새 제목 :
+        <input type="text" placeholder="제목 입력" name="title" value="${article.title}" />
+    </div>
+    <div>
+        새 내용 :
+        <textarea placeholder="내용 입력" name="body">${article.body}</textarea>
+    </div>
+    <button type="submit">수정</button>
 </form>
-
 
 
 
