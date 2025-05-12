@@ -23,7 +23,8 @@ public class UsrArticleController {
 
 	// 로그인 체크 -> 유무 체크 -> 권한체크
 	@RequestMapping("/usr/article/doModify")
-	public Object doModify(HttpSession session, int id, String title, String body) {
+	@ResponseBody
+	public ResultData doModify(HttpSession session, int id, String title, String body) {
 
 		boolean isLogined = false;
 		int loginedMemberId = 0;
@@ -44,21 +45,23 @@ public class UsrArticleController {
 		}
 
 		ResultData userCanModifyRd = articleService.userCanModify(loginedMemberId, article);
+
 		if (userCanModifyRd.isFail()) {
 			return userCanModifyRd;
-
 		}
-		articleService.modifyArticle(id, title, body);
+
+		if (userCanModifyRd.isSuccess()) {
+			articleService.modifyArticle(id, title, body);
+		}
 
 		article = articleService.getArticleById(id);
 
-		return "/usr/article/doModify";
-
+		return ResultData.from(userCanModifyRd.getResultCode(), userCanModifyRd.getMsg(), "수정된 글", article);
 	}
 
 	@RequestMapping("/usr/article/doDelete")
 	@ResponseBody
-	public ResultData doDelete(HttpSession session, int id) {
+	public String doDelete(HttpSession session, int id) {
 
 		boolean isLogined = false;
 		int loginedMemberId = 0;
@@ -69,22 +72,30 @@ public class UsrArticleController {
 		}
 
 		if (isLogined == false) {
-			return ResultData.from("F-A", "로그인 하고 시도해");
+//			return ResultData.from("F-A", "로그인 하고 시도해")
+			return Ut.jsReplace("F-A", "로그인 후 이용하세요", "../member/login");
 		}
 
 		Article article = articleService.getArticleById(id);
 
 		if (article == null) {
-			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다", id));
+//			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다", id));
+			return Ut.jsHistoryBack("F-1", Ut.f("%d번 게시글은 없습니다", id));
 		}
+
 		ResultData userCanDeleteRd = articleService.userCanDelete(loginedMemberId, article);
+
+		if (userCanDeleteRd.isFail()) {
+			return Ut.jsHistoryBack(userCanDeleteRd.getResultCode(), userCanDeleteRd.getMsg());
+		}
+
 		if (userCanDeleteRd.isSuccess()) {
+			articleService.deleteArticle(id);
+		}
 
-		articleService.deleteArticle(id);
-
-		return ResultData.from(userCanDeleteRd.getResultCode(), userCanDeleteRd.getMsg());
+//		return ResultData.from(userCanDeleteRd.getResultCode(), userCanDeleteRd.getMsg(), "입력한 id", id);
+		return Ut.jsReplace(userCanDeleteRd.getResultCode(), userCanDeleteRd.getMsg(), "../article/list");
 	}
-		return userCanDeleteRd;}
 
 	@RequestMapping("/usr/article/detail")
 	public String showDetail(HttpSession session, Model model, int id) {

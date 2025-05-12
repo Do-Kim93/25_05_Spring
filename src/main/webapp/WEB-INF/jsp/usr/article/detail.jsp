@@ -40,7 +40,7 @@
 			<c:if test="${article.userCanModify }">
 				<a href="../article/modify?id=${article.id}">수정</a>
 			</c:if>
-			<c:if test="${article.userCanModify }">
+			<c:if test="${article.userCanDelete }">
 			<a href="../article/doDelete?id=${article.id}">삭제</a>
 			</c:if>
 		</div>
