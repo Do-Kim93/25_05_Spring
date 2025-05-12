@@ -22,8 +22,8 @@ public class UsrArticleController {
 	private ArticleService articleService;
 
 	// 로그인 체크 -> 유무 체크 -> 권한체크
-	@RequestMapping("/usr/article/modify")
-	public String doModify(Model model, HttpSession session, int id, String title, String body) {
+	@RequestMapping("/usr/article/doModify")
+	public Object doModify(HttpSession session, int id, String title, String body) {
 
 		boolean isLogined = false;
 		int loginedMemberId = 0;
@@ -33,13 +33,27 @@ public class UsrArticleController {
 			loginedMemberId = (int) session.getAttribute("loginedMemberId");
 		}
 
+		if (isLogined == false) {
+			return ResultData.from("F-A", "로그인 하고 시도해");
+		}
+
 		Article article = articleService.getArticleById(id);
 
+		if (article == null) {
+			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다", id), "없는 글의 id", id);
+		}
+
+		ResultData userCanModifyRd = articleService.userCanModify(loginedMemberId, article);
+		if (userCanModifyRd.isFail()) {
+			return userCanModifyRd;
+
+		}
 		articleService.modifyArticle(id, title, body);
 
 		article = articleService.getArticleById(id);
 
-		return "/usr/article/modify";
+		return "/usr/article/doModify";
+
 	}
 
 	@RequestMapping("/usr/article/doDelete")
@@ -54,29 +68,36 @@ public class UsrArticleController {
 			loginedMemberId = (int) session.getAttribute("loginedMemberId");
 		}
 
+		if (isLogined == false) {
+			return ResultData.from("F-A", "로그인 하고 시도해");
+		}
+
 		Article article = articleService.getArticleById(id);
 
 		if (article == null) {
 			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다", id));
 		}
-
-		if (article.getMemberId() != loginedMemberId) {
-			return ResultData.from("F-A", "권한없음");
-		}
+		ResultData userCanDeleteRd = articleService.userCanDelete(loginedMemberId, article);
+		if (userCanDeleteRd.isSuccess()) {
 
 		articleService.deleteArticle(id);
 
-		return ResultData.from("S-1", Ut.f("%d번 게시글이 삭제됨", id));
+		return ResultData.from(userCanDeleteRd.getResultCode(), userCanDeleteRd.getMsg());
 	}
+		return userCanDeleteRd;}
 
 	@RequestMapping("/usr/article/detail")
-	public String showDetail(Model model, int id) {
+	public String showDetail(HttpSession session, Model model, int id) {
 
-		Article article = articleService.getArticleById(id);
+		boolean isLogined = false;
+		int loginedMemberId = 0;
 
-//		if (article == null) {
-//			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다", id));
-//		}
+		if (session.getAttribute("loginedMemberId") != null) {
+			isLogined = true;
+			loginedMemberId = (int) session.getAttribute("loginedMemberId");
+		}
+
+		Article article = articleService.getForPrintArticle(loginedMemberId, id);
 
 		model.addAttribute("article", article);
 
