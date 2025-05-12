@@ -22,9 +22,8 @@ public class UsrArticleController {
 	private ArticleService articleService;
 
 	// 로그인 체크 -> 유무 체크 -> 권한체크
-	@RequestMapping("/usr/article/doModify")
-	@ResponseBody
-	public ResultData doModify(HttpSession session, int id, String title, String body) {
+	@RequestMapping("/usr/article/modify")
+	public String doModify(Model model, HttpSession session, int id, String title, String body) {
 
 		boolean isLogined = false;
 		int loginedMemberId = 0;
@@ -36,18 +35,11 @@ public class UsrArticleController {
 
 		Article article = articleService.getArticleById(id);
 
-		if (article == null) {
-			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다", id), "없는 글의 id", id);
-		}
-
-		ResultData loginedMemberCanModifyRd = articleService.loginedMemberCanModify(loginedMemberId, article);
-
 		articleService.modifyArticle(id, title, body);
 
 		article = articleService.getArticleById(id);
 
-		return ResultData.from(loginedMemberCanModifyRd.getResultCode(), loginedMemberCanModifyRd.getMsg(), "수정된 글",
-				article);
+		return "/usr/article/modify";
 	}
 
 	@RequestMapping("/usr/article/doDelete")
@@ -77,17 +69,18 @@ public class UsrArticleController {
 		return ResultData.from("S-1", Ut.f("%d번 게시글이 삭제됨", id));
 	}
 
-	@RequestMapping("/usr/article/getArticle")
-	@ResponseBody
-	public ResultData<Article> getArticle(int id) {
+	@RequestMapping("/usr/article/detail")
+	public String showDetail(Model model, int id) {
 
 		Article article = articleService.getArticleById(id);
 
-		if (article == null) {
-			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다", id));
-		}
+//		if (article == null) {
+//			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다", id));
+//		}
 
-		return ResultData.from("S-1", Ut.f("%d번 게시글입니다", id), "게시글 1row", article);
+		model.addAttribute("article", article);
+
+		return "usr/article/detail";
 	}
 
 	@RequestMapping("/usr/article/doWrite")
