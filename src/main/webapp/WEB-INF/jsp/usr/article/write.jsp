@@ -1,25 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<c:set var="pageTitle" value="ARTICLE MODIFY"></c:set>
+<c:set var="pageTitle" value="ARTICLE WRITE"></c:set>
 <%@ include file="../common/head.jspf"%>
 
 
 <section class="mt-8 text-xl px-4">
 	<div class="mx-auto">
-		<form action="../article/doModify" method="POST">
+		<form action="../article/doWrite" method="POST">
 			<table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
 				<tbody>
-					<tr>
-						<th>아이디</th>
-						<td style="text-align: center;">
-						 <input readonly="readonly" type="text" name="id" value="${article.id}" />
-						</td>
-					</tr>
-					<tr>
-						<th>작성날짜</th>
-						<td style="text-align: center;">${article.regDate}</td>
-					</tr>
 					<tr>
 						<th>제목</th>
 						<td style="text-align: center;">
@@ -36,7 +26,7 @@
 					<tr>
 						<th></th>
 						<td style="text-align: center;">
-							<input value="수정" type="submit" />
+							<input value="작성" type="submit" />
 						</td>
 					</tr>
 

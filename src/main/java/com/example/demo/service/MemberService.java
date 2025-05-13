@@ -24,13 +24,13 @@ public class MemberService {
 		Member existsMember = getMemberByLoginId(loginId);
 
 		if (existsMember != null) {
-			return ResultData.from("F-7", Ut.f("이미 사용중인 아이디(%s)입니다", loginId));
+			return ResultData.from("F-8", Ut.f("이미 사용중인 아이디(%s)입니다", loginId));
 		}
 
 		existsMember = getMemberByNameAndEmail(name, email);
 
 		if (existsMember != null) {
-			return ResultData.from("F-8", Ut.f("이미 사용중인 이름(%s)과 이메일(%s)입니다", name, email));
+			return ResultData.from("F-9", Ut.f("이미 사용중인 이름(%s)과 이메일(%s)입니다", name, email));
 		}
 
 		memberRepository.doJoin(loginId, loginPw, name, nickname, cellphoneNum, email);

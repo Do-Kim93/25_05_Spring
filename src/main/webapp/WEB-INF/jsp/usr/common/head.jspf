@@ -34,11 +34,15 @@
 				<c:if test="${!rq.isLogined() }">
 					<li>
 						<a class="hover:underline" href="../member/login">LOGIN</a>
+						<a class="hover:underline" href="../member/join">JOIN</a>
 					</li>
 				</c:if>
 				<c:if test="${rq.isLogined() }">
 					<li>
 						<a onclick="if(confirm('로그아웃 하시겠습니까?') == false) return false;" class="hover:underline" href="../member/doLogout">LOGOUT</a>
+					</li>
+					<li>
+						<a class="hover:underline" href="../article/write">WRITE</a>
 					</li>
 				</c:if>
 			</ul>
