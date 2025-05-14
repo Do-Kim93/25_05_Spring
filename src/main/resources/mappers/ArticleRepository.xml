@@ -11,6 +11,8 @@
 		regDate = NOW(),
 		updateDate = NOW(),
 		memberId = #{memberId},
+		boardId =
+		#{boardId},
 		title =
 		#{title},
 		`body` = #{body}
@@ -42,7 +44,8 @@
 		FROM article AS A
 		INNER JOIN `member` AS M
 		ON A.memberId = M.id
-		WHERE A.id = #{id}
+		WHERE A.id =
+		#{id}
 	</select>
 
 	<select id="getArticleById" parameterType="int"
@@ -52,17 +55,35 @@
 		WHERE id =#{id}
 	</select>
 
+	<select id="getForPrintArticles"
+		resultType="com.example.demo.vo.Article">
+		SELECT A.*, M.nickname AS extra__writer
+		FROM article AS A
+		INNER JOIN `member` AS M
+		ON A.memberId = M.id
+		WHERE boardId = #{boardId}
+		<if test="search != null and keyWord != null">
+		and ${search} like CONCAT('%', #{keyWord}, '%')
+		</if>
+		ORDER BY A.id
+		DESC
+		LIMIT #{offset}, #{itemsPerPage}
+	</select>
+
 	<select id="getArticles"
 		resultType="com.example.demo.vo.Article">
 		SELECT A.*, M.nickname AS extra__writer
 		FROM article AS A
 		INNER JOIN `member` AS M
-		ON A.memberId = M.id 
-		INNER JOIN `board` AS B
-		ON A.boardId = B.id
-		WHERE A.boardId = #{boardId}
+		ON A.memberId = M.id
 		ORDER BY A.id
 		DESC
+	</select>
+
+	<select id="getPage" parameterType="int">
+		SELECT count(*)
+		FROM article
+		WHERE boardId = #{boardId}
 	</select>
 
 </mapper>

@@ -180,6 +180,7 @@ select ceiling(RAND() * 3);
 INSERT INTO article
 SET regDate = NOW(),
 memberId = ceiling(RAND() * 3),
+boardId = CEILING(RAND() * 3),
 title = CONCAT('제목__', rand()),
 `body` = CONCAT('내용__',rand());
 

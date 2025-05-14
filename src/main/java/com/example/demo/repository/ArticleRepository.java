@@ -9,7 +9,7 @@ import com.example.demo.vo.Article;
 @Mapper
 public interface ArticleRepository {
 
-	public int writeArticle(int memberId, String title, String body);
+	public int writeArticle(int memberId, String title, String body, String boardId);
 
 	public void deleteArticle(int id);
 
@@ -19,7 +19,11 @@ public interface ArticleRepository {
 
 	public Article getArticleById(int id);
 
-	public List<Article> getArticles(int boardId);
+	public List<Article> getArticles();
 
 	public Article getForPrintArticle(int loginedMemberId);
+
+	public List<Article> getForPrintArticles(int boardId, int offset, int itemsPerPage, String keyWord, String search);
+
+	public int getPage(int boardId);
 }
