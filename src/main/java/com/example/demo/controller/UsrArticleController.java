@@ -7,10 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import com.example.demo.interceptor.BeforeActionInterceptor;
 import com.example.demo.service.ArticleService;
+import com.example.demo.service.BoardService;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
+import com.example.demo.vo.Board;
 import com.example.demo.vo.ResultData;
 import com.example.demo.vo.Rq;
 
@@ -19,28 +21,49 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 public class UsrArticleController {
 
+    private final BeforeActionInterceptor beforeActionInterceptor;
+
+	@Autowired
+	private Rq rq;
+
 	@Autowired
 	private ArticleService articleService;
-	
+
+	@Autowired
+	private BoardService boardService;
+
+    UsrArticleController(BeforeActionInterceptor beforeActionInterceptor) {
+        this.beforeActionInterceptor = beforeActionInterceptor;
+    }
+
 	@RequestMapping("/usr/article/modify")
-	public String showModify(Model model, int id, String title, String body) {
-		Article article = articleService.getArticleById(id);
+	public String showModify(HttpServletRequest req, Model model, int id) {
+
+		Rq rq = (Rq) req.getAttribute("rq");
+
+		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
+
 		if (article == null) {
-			Ut.jsHistoryBack("F-1", Ut.f("%d번 게시글은 없습니다", id));
+			return Ut.jsHistoryBack("F-1", Ut.f("%d번 게시글은 없습니다", id));
 		}
-		
+
 		model.addAttribute("article", article);
+
 		return "/usr/article/modify";
 	}
 
 	// 로그인 체크 -> 유무 체크 -> 권한체크
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
-	public String doModify( HttpServletRequest req, int id, String title, String body) {
+	public String doModify(HttpServletRequest req, int id, String title, String body) {
 
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		Article article = articleService.getArticleById(id);
+
+		if (article == null) {
+			return Ut.jsReplace("F-1", Ut.f("%d번 게시글은 없습니다", id), "../article/list");
+		}
 
 		ResultData userCanModifyRd = articleService.userCanModify(rq.getLoginedMemberId(), article);
 
@@ -52,10 +75,9 @@ public class UsrArticleController {
 			articleService.modifyArticle(id, title, body);
 		}
 
-//		article = articleService.getArticleById(id);
-		
+		article = articleService.getArticleById(id);
 
-		return Ut.jsReplace(userCanModifyRd.getResultCode(), userCanModifyRd.getMsg(), "../article/list");
+		return Ut.jsReplace(userCanModifyRd.getResultCode(), userCanModifyRd.getMsg(), "../article/detail?id=" + id);
 	}
 
 	@RequestMapping("/usr/article/doDelete")
@@ -94,9 +116,11 @@ public class UsrArticleController {
 
 		return "usr/article/detail";
 	}
+
 	@RequestMapping("/usr/article/write")
-	public String showLogin() {
-		return "/usr/article/write";
+	public String showWrite(HttpServletRequest req) {
+
+		return "usr/article/write";
 	}
 
 	@RequestMapping("/usr/article/doWrite")
@@ -119,15 +143,20 @@ public class UsrArticleController {
 
 		Article article = articleService.getArticleById(id);
 
-		return Ut.jsReplace(doWriteRd.getResultCode(), doWriteRd.getMsg(), "../article/list");
+		return Ut.jsReplace(doWriteRd.getResultCode(), doWriteRd.getMsg(), "../article/detail?id=" + id);
 	}
 
 	@RequestMapping("/usr/article/list")
-	public String showList(Model model) {
+	public String showList(Model model, int boardId) {
 
-		List<Article> articles = articleService.getArticles();
+		Board board = boardService.getBoardById(boardId);
+
+		List<Article> articles = articleService.getArticles(boardId);
+		
+//		System.out.println(board);
 
 		model.addAttribute("articles", articles);
+		model.addAttribute("board", board);
 
 		return "usr/article/list";
 	}

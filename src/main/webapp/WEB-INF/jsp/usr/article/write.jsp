@@ -13,7 +13,7 @@
 					<tr>
 						<th>제목</th>
 						<td style="text-align: center;">
-							<input name="title" autocomplete="off" type="text" placeholder="젬혹 입력" />
+							<input name="title" autocomplete="off" type="text" placeholder="제목 입력" />
 						</td>
 					</tr>
 					<tr>

@@ -5,38 +5,46 @@
 <%@ include file="../common/head.jspf"%>
 
 
-<section class="mt-8 text-xl px-4">
+<section class=2"mt-8 text-xl px-4">
 	<div class="mx-auto">
 		<form action="../article/doModify" method="POST">
-			<table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
+			<input type="hidden" name="id" value="${article.id}" />
+			<table class="table"  border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
 				<tbody>
 					<tr>
-						<th>아이디</th>
-						<td style="text-align: center;">
-						 <input readonly="readonly" type="text" name="id" value="${article.id}" />
-						</td>
+						<th style="text-align: center;">ID</th>
+						<td style="text-align: center;">${article.id}</td>
 					</tr>
 					<tr>
-						<th>작성날짜</th>
+						<th style="text-align: center;">Registration Date</th>
 						<td style="text-align: center;">${article.regDate}</td>
 					</tr>
 					<tr>
-						<th>제목</th>
+						<th style="text-align: center;">Update Date</th>
+						<td style="text-align: center;">${article.updateDate}</td>
+					</tr>
+					<tr>
+						<th style="text-align: center;">Writer</th>
+						<td style="text-align: center;">${article.extra__writer }</td>
+					</tr>
+					<tr>
+						<th style="text-align: center;">Title</th>
 						<td style="text-align: center;">
-							<input name="title" autocomplete="off" type="text" placeholder="젬혹 입력" />
+							<input class="input input-primary input-sm" required="required" name="title" value="${article.title }" type="text"
+								autocomplete="off" placeholder="새 제목" />
 						</td>
 					</tr>
 					<tr>
-						<th>내용</th>
+						<th style="text-align: center;">Body</th>
 						<td style="text-align: center;">
-							<input name="body" autocomplete="off" type="text" placeholder="내용 입력" />
+							<input class="input input-primary input-sm" required="required" name="body" value="${article.body }" type="text"
+								autocomplete="off" placeholder="새 내용" />
 						</td>
 					</tr>
-
 					<tr>
 						<th></th>
 						<td style="text-align: center;">
-							<input value="수정" type="submit" />
+							<button class="btn btn-primary">수정</button>
 						</td>
 					</tr>
 
@@ -44,9 +52,12 @@
 			</table>
 		</form>
 		<div class="btns">
-			<button type="button" onclick="history.back();">뒤로가기</button>
-
+			<button class="btn btn-ghost" type="button" onclick="history.back();">뒤로가기</button>
+			<c:if test="${article.userCanDelete }">
+				<a class="btn btn-ghost" href="../article/doDelete?id=${article.id}">삭제</a>
+			</c:if>
 		</div>
+
 	</div>
 </section>
 

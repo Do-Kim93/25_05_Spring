@@ -12,10 +12,12 @@ import com.example.demo.vo.ResultData;
 import com.example.demo.vo.Rq;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UsrMemberController {
+
+	@Autowired
+	private Rq rq;
 
 	@Autowired
 	private MemberService memberService;
@@ -32,7 +34,7 @@ public class UsrMemberController {
 	}
 
 	@RequestMapping("/usr/member/login")
-	public String showLogin() {
+	public String showLogin(HttpServletRequest req) {
 		return "/usr/member/login";
 	}
 
@@ -65,14 +67,14 @@ public class UsrMemberController {
 	}
 
 	@RequestMapping("/usr/member/join")
-	public String showJoin() {
+	public String showJoin(HttpServletRequest req) {
 		return "/usr/member/join";
 	}
 
 	@RequestMapping("/usr/member/doJoin")
 	@ResponseBody
-	public String doJoin(HttpServletRequest req, String loginId, String loginPw, String loginPwCh, String name,
-			String nickname, String cellphoneNum, String email) {
+	public String doJoin(HttpServletRequest req, String loginId, String loginPw, String loginPwCh, String name, String nickname,
+			String cellphoneNum, String email) {
 
 		if (Ut.isEmptyOrNull(loginId)) {
 			return Ut.jsHistoryBack("F-1", "아이디를 입력해");
@@ -81,7 +83,10 @@ public class UsrMemberController {
 			return Ut.jsHistoryBack("F-2", "비밀번호를 입력해");
 
 		}
+		if (!loginPw.equals(loginPwCh)) {
+			return Ut.jsHistoryBack("F-7", "비밀번호 일치안함");
 
+		}
 		if (Ut.isEmptyOrNull(name)) {
 			return Ut.jsHistoryBack("F-3", "이름을 입력해");
 
@@ -98,20 +103,16 @@ public class UsrMemberController {
 			return Ut.jsHistoryBack("F-6", "이메일을 입력해");
 
 		}
-		if (!loginPw.equals(loginPwCh)) {
-			return Ut.jsHistoryBack("F-7", "비밀번호 일치안함");
 
+		ResultData joinRd = memberService.join(loginId, loginPw, name, nickname, cellphoneNum, email);
+
+		if (joinRd.isFail()) {
+			return Ut.jsHistoryBack(joinRd.getResultCode(), joinRd.getMsg());
 		}
 
-		ResultData doJoinRd = memberService.doJoin(loginId, loginPw, name, nickname, cellphoneNum, email);
+		Member member = memberService.getMemberById((int) joinRd.getData1());
 
-		if (doJoinRd.isFail()) {
-			return Ut.jsHistoryBack(doJoinRd.getResultCode(), doJoinRd.getMsg());
-		}
-
-		Member member = memberService.getMemberById((int) doJoinRd.getData1());
-
-		return Ut.jsReplace("S-1", Ut.f("%s님 환영합니다", member.getNickname()), "/");
+		return Ut.jsReplace(joinRd.getResultCode(), joinRd.getMsg(), "../member/login");
 	}
 
 }
