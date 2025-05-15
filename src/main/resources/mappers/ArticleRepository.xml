@@ -22,11 +22,6 @@
 		DELETE FROM article
 		WHERE id = #{id}
 	</delete>
-	<update id="readCount" parameterType="int">
-		UPDATE article
-		set readCount = readCount + 1
-		WHERE id = #{id}
-	</update>
 
 	<update id="modifyArticle" parameterType="map">
 		UPDATE article
@@ -37,6 +32,19 @@
 		</set>
 		WHERE id = #{id}
 	</update>
+
+	<update id="increaseHitCount" parameterType="int">
+		UPDATE article
+		SET
+		hitCount = hitCount + 1
+		WHERE id = #{id}
+	</update>
+
+	<select id="getArticleHitCount" parameterType="int">
+		SELECT hitCount
+		FROM article
+		WHERE id = #{id}
+	</select>
 
 	<select id="getArticleCount" parameterType="int">
 		SELECT COUNT(*) , M.nickname AS extra__writer
@@ -57,7 +65,8 @@
 					AND A.`body` LIKE CONCAT('%', #{searchKeyword}, '%')
 				</when>
 				<when test="searchKeywordTypeCode == 'nickname'">
-					AND M.nickname LIKE CONCAT('%', #{searchKeyword}, '%')
+					AND M.nickname LIKE CONCAT('%', #{searchKeyword},
+					'%')
 				</when>
 				<otherwise>
 					AND A.title LIKE CONCAT('%', #{searchKeyword}, '%')
