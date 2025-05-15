@@ -82,12 +82,27 @@ public class ArticleService {
 		return articleRepository.getArticles();
 	}
 
-	public List<Article> getForPrintArticles(int boardId, int offset, int itemsPerPage, String keyWord, String search) {
-		return articleRepository.getForPrintArticles(boardId, offset, itemsPerPage, keyWord, search);
+	public List<Article> getForPrintArticles(int boardId, int itemsInAPage, int page, String searchKeywordTypeCode,
+			String searchKeyword) {
+		// SELECT * FROM article WHERE boardId = 1 ORDER BY id DESC LIMIT 0, 10;
+		// --> 1page
+		// SELECT * FROM article WHERE boardId = 1 ORDER BY id DESC LIMIT 10, 10;
+		// --> 2page
+
+		int limitFrom = (page - 1) * itemsInAPage;
+		int limitTake = itemsInAPage;
+
+		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake, searchKeywordTypeCode,
+				searchKeyword);
 	}
 
-	public int getPage(int boardId) {
-		return articleRepository.getPage(boardId);
+	public int getArticleCount(int boardId, String searchKeywordTypeCode, String searchKeyword) {
+		return articleRepository.getArticleCount(boardId, searchKeywordTypeCode, searchKeyword);
+	}
+
+	public void readCount(int id) {
+		articleRepository.readCount(id);
+		
 	}
 
 }

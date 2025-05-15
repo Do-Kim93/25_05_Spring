@@ -111,7 +111,7 @@ public class UsrArticleController {
 	public String showDetail(HttpServletRequest req, Model model, int id) {
 
 		Rq rq = (Rq) req.getAttribute("rq");
-
+		articleService.readCount(id);
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
 		model.addAttribute("article", article);
@@ -154,32 +154,38 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/list")
 	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId,
-			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "%") String keyWord,
-			@RequestParam(defaultValue = "title") String search) throws IOException {
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "title") String searchKeywordTypeCode,
+			@RequestParam(defaultValue = "") String searchKeyword) throws IOException {
 
-//		Rq rq = (Rq) req.getAttribute("rq");
+		Rq rq = (Rq) req.getAttribute("rq");
 
 		Board board = boardService.getBoardById(boardId);
 
 		if (board == null) {
-//			return rq.historyBackOnView("존재하지 않는 게시판");
+			return rq.historyBackOnView("존재하지 않는 게시판");
 		}
-		int itemsPerPage = 10;
-		int offset = (page - 1) * itemsPerPage;
-		int pageNum = articleService.getPage(boardId);
-		System.out.println(pageNum);
 
-		int totalPage = (int) Math.ceil(pageNum / (double) 10);
-		System.out.println(totalPage);
+		int articlesCount = articleService.getArticleCount(boardId, searchKeywordTypeCode, searchKeyword);
 
-		List<Article> articles = articleService.getForPrintArticles(boardId, offset, itemsPerPage, keyWord, search);
+		// 한 페이지에 글 10개씩
+		// 글 20 -> 2page
+		// 글 25 -> 3page
+		int itemsInAPage = 10;
 
+		int pagesCount = (int) Math.ceil(articlesCount / (double) itemsInAPage);
+
+		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, searchKeywordTypeCode,
+				searchKeyword);
+
+		model.addAttribute("pagesCount", pagesCount);
+		model.addAttribute("articlesCount", articlesCount);
+		model.addAttribute("searchKeywordTypeCode", searchKeywordTypeCode);
+		model.addAttribute("searchKeyword", searchKeyword);
 		model.addAttribute("articles", articles);
+		model.addAttribute("boardId", boardId);
 		model.addAttribute("board", board);
 		model.addAttribute("page", page);
-		model.addAttribute("totalPage", totalPage);
-		model.addAttribute("keyWord", keyWord);
-		model.addAttribute("search", search);
 
 		return "usr/article/list";
 	}

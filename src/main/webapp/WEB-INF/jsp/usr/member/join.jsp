@@ -23,12 +23,6 @@
 						</td>
 					</tr>
 					<tr>
-						<th>비밀번호 확인</th>
-						<td style="text-align: center;">
-							<input class="input input-primary" name="loginPwCh" autocomplete="off" type="text" placeholder="비밀번호 확인" />
-						</td>
-					</tr>
-					<tr>
 						<th>이름</th>
 						<td style="text-align: center;">
 							<input class="input input-primary" name="name" autocomplete="off" type="text" placeholder="이름 입력" />

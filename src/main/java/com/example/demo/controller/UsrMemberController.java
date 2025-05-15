@@ -73,7 +73,7 @@ public class UsrMemberController {
 
 	@RequestMapping("/usr/member/doJoin")
 	@ResponseBody
-	public String doJoin(HttpServletRequest req, String loginId, String loginPw, String loginPwCh, String name, String nickname,
+	public String doJoin(HttpServletRequest req, String loginId, String loginPw, String name, String nickname,
 			String cellphoneNum, String email) {
 
 		if (Ut.isEmptyOrNull(loginId)) {
@@ -81,10 +81,6 @@ public class UsrMemberController {
 		}
 		if (Ut.isEmptyOrNull(loginPw)) {
 			return Ut.jsHistoryBack("F-2", "비밀번호를 입력해");
-
-		}
-		if (!loginPw.equals(loginPwCh)) {
-			return Ut.jsHistoryBack("F-7", "비밀번호 일치안함");
 
 		}
 		if (Ut.isEmptyOrNull(name)) {

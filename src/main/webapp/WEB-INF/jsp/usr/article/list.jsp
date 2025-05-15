@@ -7,6 +7,34 @@
 
 <section class="mt-24 text-xl px-4">
 	<div class="mx-auto">
+		<div class="mb-4 flex">
+			<div>${articlesCount }개</div>
+			<div class="flex-grow"></div>
+			<!-- 			<form action="../article/list"> -->
+			<form action="">
+				<input type="hidden" name="boardId" value="${param.boardId }" />
+				<div class="flex">
+					<select class="select select-sm select-bordered
+						max-w-xs" name="searchKeywordTypeCode"
+						data-value="${param.searchKeywordTypeCode } ">
+						<option value="title">title</option>
+						<option value="body">body</option>
+						<option value="title,body">title+body</option>
+						<option value="nickname">nicnkname</option>
+					</select>
+					<label class="ml-3 input input-bordered input-sm flex items-center gap-2">
+						<input type="text" placeholder="Search" name="searchKeyword" value="${param.searchKeyword }" />
+						<button type="submit">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4 opacity-70">
+    <path fill-rule="evenodd"
+									d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+									clip-rule="evenodd" />
+  </svg>
+						</button>
+					</label>
+				</div>
+			</form>
+		</div>
 		<table class="table" border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
 
 			<thead>
@@ -37,39 +65,49 @@
 			</tbody>
 		</table>
 	</div>
-	<form action="../article/list" method="POST">
-		<select name="boardId">
-			<option value="" selected disabled>게시판을 선택해주세요</option>
-			<option value="1">공지사항</option>
-			<option value="2">자유</option>
-			<option value="3">QnA</option>
-		</select>
-		<select name="search">
-			<option value="" selected disabled>검색</option>
-			<option value="title">제목</option>
-			<option value="body">내용</option>
-			<option value="memberId">작성자</option>
-		</select>
+	<!-- 	동적 페이징 -->
+	<div class="flex justify-center mt-4">
+		<div class="btn-group join ">
+			<c:set var="paginationLen" value="3" />
+			<c:set var="startPage" value="${page - paginationLen >= 1 ? page - paginationLen : 1 }" />
+			<c:set var="endPage" value="${page + paginationLen <= pagesCount ? page + paginationLen : pagesCount}" />
 
-		<input class="input input-primary input-sm" required="required" name="keyWord" type="text" autocomplete="off"
-			placeholder="검색어 입력" />
-		<a href="?boardId=${board.id}&keyWord=${keyWord}">검색</a>
-	</form>
+			<c:set var="baseUri" value="?boardId=${boardId }" />
+			<c:set var="baseUri" value="${baseUri }&searchKeywordTypeCode=${searchKeywordTypeCode }" />
+			<c:set var="baseUri" value="${baseUri }&searchKeyword=${searchKeyword }" />
 
-	<c:if test="${totalPage > 1}">
-		<div class="pagination">
-			<c:forEach var="i" begin="1" end="${totalPage}">
-				<c:choose>
-					<c:when test="${i == page}">
-						<strong>[${i}]</strong>
-					</c:when>
-					<c:otherwise>
-						<a href="?boardId=${board.id}&page=${i}">[${i}]</a>
-					</c:otherwise>
-				</c:choose>
+			<c:if test="${startPage > 1}">
+				<a class="join-item btn btn-sm" href="${baseUri }&page=1">1</a>
+			</c:if>
+
+			<c:if test="${startPage > 2}">
+				<button class="join-item btn btn-sm btn-disabled">...</button>
+			</c:if>
+
+
+			<c:forEach begin="${startPage }" end="${endPage }" var="i">
+				<a class="join-item btn btn-sm ${param.page == i ? 'btn-active' : ''}" href="${baseUri }&page=${i }">${i }</a>
+			</c:forEach>
+
+			<c:if test="${endPage < pagesCount - 1}">
+				<button class="join-item btn-sm btn btn-disabled">...</button>
+			</c:if>
+
+			<c:if test="${endPage < pagesCount}">
+				<a class="join-item btn btn-sm" href="${baseUri }&page=${pagesCount }">${pagesCount }</a>
+			</c:if>
+		</div>
+	</div>
+
+	<!-- 	직관적인 페이징 -->
+	<div class="flex justify-center mt-4">
+		<div class="btn-group join ">
+
+			<c:forEach begin="1" end="${pagesCount }" var="i">
+				<a class="join-item btn btn-sm ${param.page == i ? 'btn-active' : ''}" href="?page=${i }&boardId=${param.boardId}">${i }</a>
 			</c:forEach>
 		</div>
-	</c:if>
+	</div>
 </section>
 
 

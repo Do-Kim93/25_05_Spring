@@ -18,10 +18,9 @@ public class Article {
 	private int boardId;
 	private String title;
 	private String body;
+	private String readCount;
 
 	private String extra__writer;
 	private boolean userCanModify;
 	private boolean userCanDelete;
-	private int pageNum;
-	private String keyWord;
 }
