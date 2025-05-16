@@ -84,12 +84,13 @@
 
 	<select id="getForPrintArticle" parameterType="int"
 		resultType="com.example.demo.vo.Article">
-		SELECT A.*, M.nickname AS extra__writer
+		SELECT A.*, M.nickname AS extra__writer, count(L.article_id)
 		FROM article AS A
 		INNER JOIN `member` AS M
-		ON A.memberId = M.id
+		ON A.memberId = M.id INNER JOIN article_like AS L
+		ON A.Id = L.article_id  
 		WHERE A.id =
-		#{id}
+		#{id} group by A.Id
 	</select>
 
 	<select id="getArticleById" parameterType="int"
@@ -138,10 +139,12 @@
 
 	<select id="getArticles"
 		resultType="com.example.demo.vo.Article">
-		SELECT A.*, M.nickname AS extra__writer
+		SELECT A.*, M.nickname AS extra__writer, count(L.article_id)
 		FROM article AS A
 		INNER JOIN `member` AS M
-		ON A.memberId = M.id
+		ON A.memberId = M.id INNER JOIN article_like AS L
+		ON A.Id = L.article_id
+		group by A.Id
 		ORDER BY A.id
 		DESC
 	</select>

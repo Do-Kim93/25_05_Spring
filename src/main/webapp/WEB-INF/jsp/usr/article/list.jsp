@@ -44,6 +44,7 @@
 					<th style="text-align: center;">Title</th>
 					<th style="text-align: center;">Writer</th>
 					<th style="text-align: center;">VIEWS</th>
+					<th style="text-align: center;">LIKES</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -56,6 +57,7 @@
 						</td>
 						<td style="text-align: center;">${article.extra__writer }</td>
 						<td style="text-align: center;">${article.hitCount }</td>
+						<td style="text-align: center;">${article.likeCount }</td>
 					</tr>
 				</c:forEach>
 

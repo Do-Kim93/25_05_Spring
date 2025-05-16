@@ -62,6 +62,12 @@
 					</td>
 				</tr>
 				<tr>
+					<th style="text-align: center;">LIKE</th>
+					<td style="text-align: center;">
+						<span class="article-detail__like-count">${article.likeCount }</span>
+					</td>
+				</tr>
+				<tr>
 					<th style="text-align: center;">Title</th>
 					<td style="text-align: center;">${article.title }</td>
 				</tr>

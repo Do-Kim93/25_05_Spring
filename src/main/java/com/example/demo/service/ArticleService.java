@@ -10,6 +10,7 @@ import com.example.demo.repository.ArticleRepository;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
 import com.example.demo.vo.ResultData;
+import com.example.demo.vo.Rq;
 
 @Service
 public class ArticleService {
@@ -114,31 +115,51 @@ public class ArticleService {
 	public Object getArticleHitCount(int id) {
 		return articleRepository.getArticleHitCount(id);
 	}
-	 @Autowired private ArticleLikeRepository likeRepo;
 
-	    public boolean isLikedByMember(int memberId, int articleId) {
-	        return likeRepo.isLiked(articleId, memberId) > 0;
-	    }
+	@Autowired
+	private ArticleLikeRepository likeRepo;
+	@Autowired
+	private Rq rq; // Rq를 주입하거나, memberId를 파라미터로 받도록 바꿔도 됩니다.
 
-	    public int getLikeCount(int articleId) {
-	        return likeRepo.getLikeCount(articleId);
-	    }
-
-	    public void like(int memberId, int articleId) {
-	        likeRepo.insertLike(articleId, memberId);
-	    }
-
-	    public void cancelLike(int memberId, int articleId) {
-	        likeRepo.deleteLike(articleId, memberId);
-	    }
-
-	    public boolean toggleLike(int memberId, int articleId) {
-	        if (isLikedByMember(memberId, articleId)) {
-	            cancelLike(memberId, articleId);
-	            return false;
-	        } else {
-	            like(memberId, articleId);
-	            return true;
-	        }
-	    }
+	public boolean isLikedByMember(int memberId, int articleId) {
+		return likeRepo.isLiked(articleId, memberId) > 0;
 	}
+
+	public int getLikeCount(int articleId) {
+		return likeRepo.getLikeCount(articleId);
+	}
+
+	public void like(int memberId, int articleId) {
+		likeRepo.insertLike(articleId, memberId);
+	}
+
+	public void cancelLike(int memberId, int articleId) {
+		likeRepo.deleteLike(articleId, memberId);
+	}
+
+	public boolean toggleLike(int memberId, int articleId) {
+		if (isLikedByMember(memberId, articleId)) {
+			cancelLike(memberId, articleId);
+			return false;
+		} else {
+			like(memberId, articleId);
+			return true;
+		}
+	}
+	public ResultData toggleLike(int articleId) {
+		int memberId = rq.getLoginedMemberId();
+		if (memberId == 0) {
+			return ResultData.from("F-1", "로그인 후 이용해 주세요");
+		}
+
+		boolean nowLiked = toggleLike(memberId, articleId);
+		int likeCount = getLikeCount(articleId);
+
+		if (nowLiked) {
+			return ResultData.from("S-1", "좋아요!", "likeCount", likeCount);
+		} else {
+			return ResultData.from("S-2", "좋아요 취소", "likeCount", likeCount);
+		}
+
+	}
+}
