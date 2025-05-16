@@ -114,6 +114,10 @@ public class UsrArticleController {
 
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
+		// 좋아요 정보 세팅
+		article.setLikeCount(articleService.getLikeCount(id));
+		article.setLiked(articleService.isLikedByMember(rq.getLoginedMemberId(), id));
+
 		model.addAttribute("article", article);
 
 		return "usr/article/detail";
@@ -201,5 +205,25 @@ public class UsrArticleController {
 		model.addAttribute("page", page);
 
 		return "usr/article/list";
+	}
+
+	@RequestMapping("/usr/article/doToggleLike")
+	@ResponseBody
+	public ResultData doToggleLike(HttpServletRequest req, int id) {
+		Rq rq = (Rq) req.getAttribute("rq");
+		
+		int loginedMemberId = rq.getLoginedMemberId();
+		if (loginedMemberId == 0) {
+			return ResultData.from("F-1", "로그인 후 이용해 주세요");
+		}
+
+		boolean nowLiked = articleService.toggleLike(loginedMemberId, id);
+		int likeCount = articleService.getLikeCount(id);
+
+		if (nowLiked) {
+			return ResultData.from("S-1", "좋아요!", "likeCount", likeCount);
+		} else {
+			return ResultData.from("S-2", "좋아요 취소", "likeCount", likeCount);
+		}
 	}
 }

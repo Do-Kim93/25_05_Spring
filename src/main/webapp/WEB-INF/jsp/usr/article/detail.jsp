@@ -80,6 +80,15 @@
 				<a class="btn btn-ghost" href="../article/doDelete?id=${article.id}">삭제</a>
 			</c:if>
 		</div>
+		<c:if test="${rq.loginedMemberId > 0}">
+    <button id="likeBtn" data-article-id="${article.id}">
+        <c:choose>
+            <c:when test="${article.liked}">좋아요 취소</c:when>
+            <c:otherwise>좋아요</c:otherwise>
+        </c:choose>
+    </button>
+    <span id="likeCount">${article.likeCount}</span>명
+</c:if>
 
 	</div>
 </section>

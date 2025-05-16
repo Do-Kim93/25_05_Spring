@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.repository.ArticleLikeRepository;
 import com.example.demo.repository.ArticleRepository;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
@@ -113,5 +114,31 @@ public class ArticleService {
 	public Object getArticleHitCount(int id) {
 		return articleRepository.getArticleHitCount(id);
 	}
+	 @Autowired private ArticleLikeRepository likeRepo;
 
-}
+	    public boolean isLikedByMember(int memberId, int articleId) {
+	        return likeRepo.isLiked(articleId, memberId) > 0;
+	    }
+
+	    public int getLikeCount(int articleId) {
+	        return likeRepo.getLikeCount(articleId);
+	    }
+
+	    public void like(int memberId, int articleId) {
+	        likeRepo.insertLike(articleId, memberId);
+	    }
+
+	    public void cancelLike(int memberId, int articleId) {
+	        likeRepo.deleteLike(articleId, memberId);
+	    }
+
+	    public boolean toggleLike(int memberId, int articleId) {
+	        if (isLikedByMember(memberId, articleId)) {
+	            cancelLike(memberId, articleId);
+	            return false;
+	        } else {
+	            like(memberId, articleId);
+	            return true;
+	        }
+	    }
+	}
