@@ -5,12 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.repository.ArticleLikeRepository;
 import com.example.demo.repository.ArticleRepository;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
 import com.example.demo.vo.ResultData;
-import com.example.demo.vo.Rq;
 
 @Service
 public class ArticleService {
@@ -116,50 +114,52 @@ public class ArticleService {
 		return articleRepository.getArticleHitCount(id);
 	}
 
-	@Autowired
-	private ArticleLikeRepository likeRepo;
-	@Autowired
-	private Rq rq; // Rq를 주입하거나, memberId를 파라미터로 받도록 바꿔도 됩니다.
+	public ResultData increaseGoodReactionPoint(int relId) {
+		int affectedRow = articleRepository.increaseGoodReactionPoint(relId);
 
-	public boolean isLikedByMember(int memberId, int articleId) {
-		return likeRepo.isLiked(articleId, memberId) > 0;
-	}
-
-	public int getLikeCount(int articleId) {
-		return likeRepo.getLikeCount(articleId);
-	}
-
-	public void like(int memberId, int articleId) {
-		likeRepo.insertLike(articleId, memberId);
-	}
-
-	public void cancelLike(int memberId, int articleId) {
-		likeRepo.deleteLike(articleId, memberId);
-	}
-
-	public boolean toggleLike(int memberId, int articleId) {
-		if (isLikedByMember(memberId, articleId)) {
-			cancelLike(memberId, articleId);
-			return false;
-		} else {
-			like(memberId, articleId);
-			return true;
-		}
-	}
-	public ResultData toggleLike(int articleId) {
-		int memberId = rq.getLoginedMemberId();
-		if (memberId == 0) {
-			return ResultData.from("F-1", "로그인 후 이용해 주세요");
+		if (affectedRow == 0) {
+			return ResultData.from("F-1", "없는 게시물");
 		}
 
-		boolean nowLiked = toggleLike(memberId, articleId);
-		int likeCount = getLikeCount(articleId);
+		return ResultData.from("S-1", "좋아요 증가", "affectedRow", affectedRow);
+	}
 
-		if (nowLiked) {
-			return ResultData.from("S-1", "좋아요!", "likeCount", likeCount);
-		} else {
-			return ResultData.from("S-2", "좋아요 취소", "likeCount", likeCount);
+	public ResultData increaseBadReactionPoint(int relId) {
+		int affectedRow = articleRepository.increaseBadReactionPoint(relId);
+
+		if (affectedRow == 0) {
+			return ResultData.from("F-1", "없는 게시물");
 		}
 
+		return ResultData.from("S-1", "싫어요 증가", "affectedRow", affectedRow);
 	}
+
+	public ResultData decreaseGoodReactionPoint(int relId) {
+		int affectedRow = articleRepository.decreaseGoodReactionPoint(relId);
+
+		if (affectedRow == 0) {
+			return ResultData.from("F-1", "없는 게시물");
+		}
+
+		return ResultData.from("S-1", "좋아요 감소", "affectedRow", affectedRow);
+	}
+
+	public ResultData decreaseBadReactionPoint(int relId) {
+		int affectedRow = articleRepository.decreaseBadReactionPoint(relId);
+
+		if (affectedRow == 0) {
+			return ResultData.from("F-1", "없는 게시물");
+		}
+
+		return ResultData.from("S-1", "싫어요 감소", "affectedRow", affectedRow);
+	}
+
+	public int getGoodRP(int relId) {
+		return articleRepository.getGoodRP(relId);
+	}
+
+	public int getBadRP(int relId) {
+		return articleRepository.getBadRP(relId);
+	}
+
 }

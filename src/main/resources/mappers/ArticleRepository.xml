@@ -40,6 +40,36 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="increaseGoodReactionPoint" parameterType="int">
+		UPDATE
+		article
+		SET
+		goodReactionPoint = goodReactionPoint + 1
+		WHERE id = #{relId}
+	</update>
+
+	<update id="decreaseGoodReactionPoint" parameterType="int">
+		UPDATE
+		article
+		SET goodReactionPoint = goodReactionPoint - 1
+		WHERE id =
+		#{relId}
+	</update>
+
+	<update id="increaseBadReactionPoint" parameterType="int">
+		UPDATE
+		article
+		SET badReactionPoint = badReactionPoint + 1
+		WHERE id = #{relId}
+	</update>
+
+	<update id="decreaseBadReactionPoint" parameterType="int">
+		UPDATE
+		article
+		SET badReactionPoint = badReactionPoint - 1
+		WHERE id = #{relId}
+	</update>
+
 	<select id="getArticleHitCount" parameterType="int">
 		SELECT hitCount
 		FROM article
@@ -82,15 +112,14 @@
 		LAST_INSERT_ID()
 	</select>
 
+
 	<select id="getForPrintArticle" parameterType="int"
 		resultType="com.example.demo.vo.Article">
-		SELECT A.*, M.nickname AS extra__writer, count(L.article_id)
+		SELECT A.*, M.nickname AS extra__writer
 		FROM article AS A
 		INNER JOIN `member` AS M
-		ON A.memberId = M.id INNER JOIN article_like AS L
-		ON A.Id = L.article_id  
-		WHERE A.id =
-		#{id} group by A.Id
+		ON A.memberId = M.id
+		WHERE A.id = #{id}
 	</select>
 
 	<select id="getArticleById" parameterType="int"
@@ -139,14 +168,21 @@
 
 	<select id="getArticles"
 		resultType="com.example.demo.vo.Article">
-		SELECT A.*, M.nickname AS extra__writer, count(L.article_id)
+		SELECT A.*, M.nickname AS extra__writer
 		FROM article AS A
 		INNER JOIN `member` AS M
-		ON A.memberId = M.id INNER JOIN article_like AS L
-		ON A.Id = L.article_id
-		group by A.Id
+		ON A.memberId = M.id
 		ORDER BY A.id
 		DESC
+	</select>
+
+	<select id="getGoodRP">SELECT goodReactionPoint
+		FROM article
+		WHERE id = #{relId}
+	</select>
+	<select id="getBadRP">SELECT badReactionPoint
+		FROM article
+		WHERE id = #{relId}
 	</select>
 
 </mapper>
