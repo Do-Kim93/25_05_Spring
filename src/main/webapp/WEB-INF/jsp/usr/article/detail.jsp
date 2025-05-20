@@ -76,6 +76,7 @@
 			},
 			error : function(jqXHR, textStatus, errorThrown) {
 				alert('좋아요 오류 발생 : ' + textStatus);
+				location.replace('/usr/member/login');
 
 			}
 
@@ -130,6 +131,7 @@
 			},
 			error : function(jqXHR, textStatus, errorThrown) {
 				alert('싫어요 오류 발생 : ' + textStatus);
+				location.replace('/usr/member/login');;
 			}
 
 		});
