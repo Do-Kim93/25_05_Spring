@@ -9,22 +9,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Article {
+public class ArticleReply {
 
 	private int id;
 	private String regDate;
 	private String updateDate;
 	private int memberId;
-	private int boardId;
+	private String relTypeCode;
 	private String title;
 	private String body;
-	private int hitCount;
+	private int relId;
 	private int goodReactionPoint;
 	private int badReactionPoint;
 
 	private String extra__writer;
-	
-	private String extra__repliesCount;
 	
 	private String extra__sumReactionPoint;
 	
