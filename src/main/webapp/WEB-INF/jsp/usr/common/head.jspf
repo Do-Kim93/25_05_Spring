@@ -32,10 +32,14 @@
 					<a class="hover:underline" href="/">HOME</a>
 				</li>
 				<li>
+					<a class="hover:underline" href="../article/list?boardId=3">QnA</a>
+				</li>
+				<li>
 					<div class="dropdown dropdown-hover">
 						<div tabindex="0" role="button">
 							<a href="../article/list?boardId=1">LIST</a>
 						</div>
+
 						<ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
 							<li>
 								<a href="../article/list?boardId=1">NOTICE</a>
@@ -67,6 +71,7 @@
 					<li>
 						<a class="hover:underline" href="../member/login">LOGIN</a>
 					</li>
+
 					<li>
 						<a class="hover:underline" href="../member/join">JOIN</a>
 					</li>

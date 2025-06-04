@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.repository.AddressRepository">
+
+	<select id="getForPringAdress"
+		resultType="com.example.demo.vo.Address">
+		SELECT b.address, b.road_address, l.contract_date, l.deposit, l.rent, l.area, l.floor
+		FROM leases AS l
+		INNER JOIN buildings AS b
+		ON b.id = l.building_id
+		WHERE (b.address = #{ad} or b.road_address = #{ad})
+		and l.floor = #{flor}
+	</select>
+	
+	
+
+
+
+</mapper>
