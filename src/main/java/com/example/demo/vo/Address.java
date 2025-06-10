@@ -18,4 +18,8 @@ public class Address {
 	private int rent;
 	private double area;
 	private int floor;
+	private String lease_type;
+	private String warning_type;
+	private String warning_level;
+	private String warning_reason;
 	}

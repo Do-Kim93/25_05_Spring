@@ -7,15 +7,83 @@
 
 	<select id="getForPringAdress"
 		resultType="com.example.demo.vo.Address">
-		SELECT b.address, b.road_address, l.contract_date, l.deposit, l.rent, l.area, l.floor
-		FROM leases AS l
-		INNER JOIN buildings AS b
-		ON b.id = l.building_id
-		WHERE (b.address = #{ad} or b.road_address = #{ad})
-		and l.floor = #{flor}
+		WITH input_building AS (
+		SELECT id
+		FROM buildings
+		WHERE
+		road_address = #{ad} or address = #{ad}
+		LIMIT 1
+		),
+
+		lease_dedup AS (
+		SELECT *
+		FROM (
+		SELECT *,
+		ROW_NUMBER() OVER (
+		PARTITION BY contract_date, `area`, `floor`
+		ORDER BY deposit DESC
+		) AS rn
+		FROM leases
+		WHERE building_id = (SELECT id
+		FROM input_building)
+		) t
+		WHERE rn = 1
+		),
+
+		sale_dedup AS (
+		SELECT *
+		FROM (
+		SELECT *,
+		ROW_NUMBER() OVER (
+		PARTITION BY building_id, floor, area
+		ORDER BY contract_date DESC
+		) AS rn
+		FROM sales
+		WHERE building_id =
+		(SELECT id FROM input_building)
+		) t
+		WHERE rn = 1
+		)
+
+		SELECT
+		b.road_address,
+		l.contract_date,
+		l.building_id,
+		l.area,
+		l.floor,
+		l.lease_type,
+		l.deposit,
+		CASE
+		WHEN ROUND(l.deposit / s.price, 2) >= 0.7 THEN '깡통전세위험'
+		ELSE '깡통전세안전'
+		END AS warning_type,
+		CASE
+		WHEN ROUND(l.deposit / s.price, 2) >= 0.9 THEN
+		'critical'
+		WHEN ROUND(l.deposit / s.price, 2) >= 0.7 THEN 'high'
+		ELSE
+		'medium'
+		END
+		AS warning_level,
+		CONCAT(
+		'전세가율 ',
+		ROUND(l.deposit / s.price *
+		100, 2),
+		'% (기준 70%)'
+		) AS warning_reason,
+		NOW() AS warning_timestamp
+		FROM
+		lease_dedup l
+		JOIN sale_dedup s
+		ON l.building_id = s.building_id
+		AND
+		l.floor = s.floor
+		AND l.area = s.area
+		JOIN buildings b ON l.building_id
+		= b.id;
 	</select>
-	
-	
+
+
 
 
 
